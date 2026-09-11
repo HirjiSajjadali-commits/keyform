@@ -29,6 +29,14 @@
   padding: clamp(20px, 4vw, 32px);
 }
 
+.headRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
 .kicker {
   font-size: 12px;
   letter-spacing: 0.12em;
@@ -40,7 +48,33 @@
   font-family: var(--font-display);
   font-size: clamp(22px, 3vw, 28px);
   font-weight: 600;
-  margin-bottom: 24px;
+}
+
+.explodeToggle {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  padding: 8px 10px;
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  color: var(--ink);
+}
+
+.explodeToggle:hover {
+  border-color: var(--accent);
+}
+
+.slash {
+  color: var(--muted);
+}
+
+.dim {
+  color: var(--muted);
 }
 
 .priceRow {

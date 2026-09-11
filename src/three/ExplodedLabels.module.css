@@ -1,0 +1,15 @@
+.label {
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink, #16161a);
+  background: color-mix(in srgb, var(--surface, #fff) 82%, transparent);
+  padding: 3px 8px;
+  border-radius: 3px;
+  border: 1px solid var(--line, #e0e0dc);
+  transform: translate(6px, -50%);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}

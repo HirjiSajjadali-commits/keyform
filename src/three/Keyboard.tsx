@@ -4,12 +4,17 @@ import { KEY_LAYOUT } from './layout';
 import { CASE_CENTER_X, CASE_CENTER_Z, BOARD_TILT_DEG } from './dimensions';
 import { Case } from './Case';
 import { Keycap } from './Keycap';
+import { ExplodedLabels } from './ExplodedLabels';
+import { useExplodedView } from './useExplodedView';
+import { useConfiguratorStore } from '../store/configurator';
 
 export interface KeyboardRefs {
   keyGroups: Map<string, Group>;
   keyMaterials: Map<string, MeshStandardMaterial>;
   caseMaterial: MeshStandardMaterial | null;
   plateMaterial: MeshStandardMaterial | null;
+  caseGroup: Group | null;
+  plateGroup: Group | null;
 }
 
 interface KeyboardProps {
@@ -35,9 +40,14 @@ export function Keyboard({ caseColor, keycapColor, modColor, accentColor, plateC
     keyMaterials: new Map(),
     caseMaterial: null,
     plateMaterial: null,
+    caseGroup: null,
+    plateGroup: null,
   });
 
   if (refsOut) refsOut(refs.current);
+
+  const exploded = useConfiguratorStore((s) => s.exploded);
+  useExplodedView(() => refs.current, exploded);
 
   return (
     <group rotation={[BOARD_TILT_DEG * DEG_TO_RAD, 0, 0]}>
@@ -50,6 +60,12 @@ export function Keyboard({ caseColor, keycapColor, modColor, accentColor, plateC
           }}
           plateMaterialRef={(el) => {
             refs.current.plateMaterial = el;
+          }}
+          caseGroupRef={(el) => {
+            refs.current.caseGroup = el;
+          }}
+          plateGroupRef={(el) => {
+            refs.current.plateGroup = el;
           }}
         />
         {KEY_LAYOUT.map((keyDef) => (
@@ -67,6 +83,7 @@ export function Keyboard({ caseColor, keycapColor, modColor, accentColor, plateC
             }}
           />
         ))}
+        <ExplodedLabels visible={exploded} />
       </group>
     </group>
   );

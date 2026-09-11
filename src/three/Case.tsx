@@ -25,6 +25,8 @@ interface CaseProps {
   plateColor: string;
   caseMaterialRef?: (el: THREE.MeshStandardMaterial | null) => void;
   plateMaterialRef?: (el: THREE.MeshStandardMaterial | null) => void;
+  caseGroupRef?: (el: THREE.Group | null) => void;
+  plateGroupRef?: (el: THREE.Group | null) => void;
 }
 
 const RIM_BOTTOM_Y = TRAY_FLOOR_Y;
@@ -33,7 +35,7 @@ const RIM_CENTER_Y = RIM_BOTTOM_Y + RIM_HEIGHT / 2;
 const BASE_CENTER_Y = CASE_BOTTOM_Y + BASE_SLAB_HEIGHT / 2;
 const PLATE_CENTER_Y = TRAY_FLOOR_Y + PLATE_TRIM_HEIGHT / 2;
 
-export function Case({ color, plateColor, caseMaterialRef, plateMaterialRef }: CaseProps) {
+export function Case({ color, plateColor, caseMaterialRef, plateMaterialRef, caseGroupRef, plateGroupRef }: CaseProps) {
   const caseMaterial = useMemo(
     () => new THREE.MeshStandardMaterial({ color, metalness: 0.85, roughness: 0.32 }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -65,67 +67,71 @@ export function Case({ color, plateColor, caseMaterialRef, plateMaterialRef }: C
 
   return (
     <group>
-      {/* Base slab spans the full footprint at the recessed tray-floor height — this is
-          what shows through as the tray floor under the keys. */}
-      <RoundedBox
-        args={[CASE_WIDTH, BASE_SLAB_HEIGHT, CASE_DEPTH]}
-        radius={CASE_CORNER_RADIUS}
-        smoothness={4}
-        position={[CASE_CENTER_X, BASE_CENTER_Y, CASE_CENTER_Z]}
-        material={caseMaterial}
-        castShadow
-        receiveShadow
-      />
+      <group ref={caseGroupRef}>
+        {/* Base slab spans the full footprint at the recessed tray-floor height — this is
+            what shows through as the tray floor under the keys. */}
+        <RoundedBox
+          args={[CASE_WIDTH, BASE_SLAB_HEIGHT, CASE_DEPTH]}
+          radius={CASE_CORNER_RADIUS}
+          smoothness={4}
+          position={[CASE_CENTER_X, BASE_CENTER_Y, CASE_CENTER_Z]}
+          material={caseMaterial}
+          castShadow
+          receiveShadow
+        />
 
-      {/* Rim bars: raised only over the margins, so the key area is a genuine recess —
-          no CSG needed. */}
-      <mesh position={[CASE_CENTER_X, RIM_CENTER_Y, -MARGIN_BACK / 2]} material={caseMaterial} castShadow receiveShadow>
-        <boxGeometry args={[CASE_WIDTH, RIM_HEIGHT, MARGIN_BACK]} />
-      </mesh>
-      <mesh
-        position={[CASE_CENTER_X, RIM_CENTER_Y, BOARD_DEPTH_MM + MARGIN_FRONT / 2]}
-        material={caseMaterial}
-        castShadow
-        receiveShadow
-      >
-        <boxGeometry args={[CASE_WIDTH, RIM_HEIGHT, MARGIN_FRONT]} />
-      </mesh>
-      <mesh position={[-MARGIN_SIDE / 2, RIM_CENTER_Y, BOARD_DEPTH_MM / 2]} material={caseMaterial} castShadow receiveShadow>
-        <boxGeometry args={[MARGIN_SIDE, RIM_HEIGHT, BOARD_DEPTH_MM]} />
-      </mesh>
-      <mesh
-        position={[BOARD_WIDTH_MM + MARGIN_SIDE / 2, RIM_CENTER_Y, BOARD_DEPTH_MM / 2]}
-        material={caseMaterial}
-        castShadow
-        receiveShadow
-      >
-        <boxGeometry args={[MARGIN_SIDE, RIM_HEIGHT, BOARD_DEPTH_MM]} />
-      </mesh>
+        {/* Rim bars: raised only over the margins, so the key area is a genuine recess —
+            no CSG needed. */}
+        <mesh position={[CASE_CENTER_X, RIM_CENTER_Y, -MARGIN_BACK / 2]} material={caseMaterial} castShadow receiveShadow>
+          <boxGeometry args={[CASE_WIDTH, RIM_HEIGHT, MARGIN_BACK]} />
+        </mesh>
+        <mesh
+          position={[CASE_CENTER_X, RIM_CENTER_Y, BOARD_DEPTH_MM + MARGIN_FRONT / 2]}
+          material={caseMaterial}
+          castShadow
+          receiveShadow
+        >
+          <boxGeometry args={[CASE_WIDTH, RIM_HEIGHT, MARGIN_FRONT]} />
+        </mesh>
+        <mesh position={[-MARGIN_SIDE / 2, RIM_CENTER_Y, BOARD_DEPTH_MM / 2]} material={caseMaterial} castShadow receiveShadow>
+          <boxGeometry args={[MARGIN_SIDE, RIM_HEIGHT, BOARD_DEPTH_MM]} />
+        </mesh>
+        <mesh
+          position={[BOARD_WIDTH_MM + MARGIN_SIDE / 2, RIM_CENTER_Y, BOARD_DEPTH_MM / 2]}
+          material={caseMaterial}
+          castShadow
+          receiveShadow
+        >
+          <boxGeometry args={[MARGIN_SIDE, RIM_HEIGHT, BOARD_DEPTH_MM]} />
+        </mesh>
 
-      {/* Plate trim: a thin metallic line straddling the key-area/rim boundary. */}
-      <mesh position={[BOARD_WIDTH_MM / 2, PLATE_CENTER_Y, -PLATE_TRIM_WIDTH / 2]} material={plateMaterial}>
-        <boxGeometry args={[BOARD_WIDTH_MM, PLATE_TRIM_HEIGHT, PLATE_TRIM_WIDTH]} />
-      </mesh>
-      <mesh
-        position={[BOARD_WIDTH_MM / 2, PLATE_CENTER_Y, BOARD_DEPTH_MM + PLATE_TRIM_WIDTH / 2]}
-        material={plateMaterial}
-      >
-        <boxGeometry args={[BOARD_WIDTH_MM, PLATE_TRIM_HEIGHT, PLATE_TRIM_WIDTH]} />
-      </mesh>
-      <mesh position={[-PLATE_TRIM_WIDTH / 2, PLATE_CENTER_Y, BOARD_DEPTH_MM / 2]} material={plateMaterial}>
-        <boxGeometry args={[PLATE_TRIM_WIDTH, PLATE_TRIM_HEIGHT, BOARD_DEPTH_MM]} />
-      </mesh>
-      <mesh
-        position={[BOARD_WIDTH_MM + PLATE_TRIM_WIDTH / 2, PLATE_CENTER_Y, BOARD_DEPTH_MM / 2]}
-        material={plateMaterial}
-      >
-        <boxGeometry args={[PLATE_TRIM_WIDTH, PLATE_TRIM_HEIGHT, BOARD_DEPTH_MM]} />
-      </mesh>
+        {/* USB-C port notch, back-left face */}
+        <mesh position={[MARGIN_SIDE + 26, CASE_BOTTOM_Y + 9, -MARGIN_BACK + 1]} material={notchMaterial}>
+          <boxGeometry args={[9, 3.5, 4]} />
+        </mesh>
+      </group>
 
-      {/* USB-C port notch, back-left face */}
-      <mesh position={[MARGIN_SIDE + 26, CASE_BOTTOM_Y + 9, -MARGIN_BACK + 1]} material={notchMaterial}>
-        <boxGeometry args={[9, 3.5, 4]} />
-      </mesh>
+      <group ref={plateGroupRef}>
+        {/* Plate trim: a thin metallic line straddling the key-area/rim boundary. */}
+        <mesh position={[BOARD_WIDTH_MM / 2, PLATE_CENTER_Y, -PLATE_TRIM_WIDTH / 2]} material={plateMaterial}>
+          <boxGeometry args={[BOARD_WIDTH_MM, PLATE_TRIM_HEIGHT, PLATE_TRIM_WIDTH]} />
+        </mesh>
+        <mesh
+          position={[BOARD_WIDTH_MM / 2, PLATE_CENTER_Y, BOARD_DEPTH_MM + PLATE_TRIM_WIDTH / 2]}
+          material={plateMaterial}
+        >
+          <boxGeometry args={[BOARD_WIDTH_MM, PLATE_TRIM_HEIGHT, PLATE_TRIM_WIDTH]} />
+        </mesh>
+        <mesh position={[-PLATE_TRIM_WIDTH / 2, PLATE_CENTER_Y, BOARD_DEPTH_MM / 2]} material={plateMaterial}>
+          <boxGeometry args={[PLATE_TRIM_WIDTH, PLATE_TRIM_HEIGHT, BOARD_DEPTH_MM]} />
+        </mesh>
+        <mesh
+          position={[BOARD_WIDTH_MM + PLATE_TRIM_WIDTH / 2, PLATE_CENTER_Y, BOARD_DEPTH_MM / 2]}
+          material={plateMaterial}
+        >
+          <boxGeometry args={[PLATE_TRIM_WIDTH, PLATE_TRIM_HEIGHT, BOARD_DEPTH_MM]} />
+        </mesh>
+      </group>
     </group>
   );
 }

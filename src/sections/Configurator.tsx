@@ -27,8 +27,22 @@ export function Configurator() {
       <div className={styles.spacer} aria-hidden="true" />
       <div className={styles.panelWrap}>
         <div className={styles.panel}>
-          <p className={`mono ${styles.kicker}`}>CONFIGURE</p>
-          <h2 className={styles.title}>Build your KF-TKL-01.</h2>
+          <div className={styles.headRow}>
+            <div>
+              <p className={`mono ${styles.kicker}`}>CONFIGURE</p>
+              <h2 className={styles.title}>Build your KF-TKL-01.</h2>
+            </div>
+            <button
+              type="button"
+              className={`mono ${styles.explodeToggle}`}
+              aria-pressed={state.exploded}
+              onClick={state.toggleExploded}
+            >
+              <span className={state.exploded ? styles.dim : undefined}>ASSEMBLED</span>
+              <span className={styles.slash}>/</span>
+              <span className={state.exploded ? undefined : styles.dim}>EXPLODED</span>
+            </button>
+          </div>
 
           <RadioSwatchGroup
             legend="Case finish"
