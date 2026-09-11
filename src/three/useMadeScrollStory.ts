@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useThree } from '@react-three/fiber';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { KeyboardRefs } from './Keyboard';
 import { KEY_LAYOUT } from './layout';
@@ -7,8 +8,24 @@ import { useConfiguratorStore } from '../store/configurator';
 import { useScrollStoryStore } from '../store/scrollStory';
 
 const KEY_REST_Y = TRAY_FLOOR_Y + KEY_HEIGHT / 2;
-const PLATE_RISE = 8;
+// Plate-only separation needs more than the button-exploded-view's 8mm to read clearly
+// here — that view also drops the case and lifts every key at the same time, so its 8mm
+// plate gap reads fine amid a much bigger overall spread. This story moves the plate
+// alone for an entire beat (the case deliberately stays put), so it needs more of its own
+// visual weight to not look identical to "assembled".
+const PLATE_RISE = 30;
 const KEY_RISE = 22;
+
+// Each transitioning beat reaches its FULL amount by 60% through its own quarter of the
+// scroll range, then holds there for the rest of that beat — so whichever moment the
+// caption happens to be read at, the beat's state is already fully, obviously realised
+// rather than still lagging in from a near-zero start (which is what made "One billet"
+// and "Every key" read as visually identical before this).
+const BEAT_COMPLETE_FRACTION = 0.6;
+// Stagger only eats into the FIRST 30% of a beat's already-compressed rise, not half of
+// it — so the farthest keys still finish rising with room to spare before the next beat
+// starts reversing them.
+const KEY_STAGGER_MAX_DELAY = 0.3;
 
 const maxDist = Math.max(...KEY_LAYOUT.map((k) => Math.hypot(k.x - CASE_CENTER_X, k.z - CASE_CENTER_Z)));
 const keyDistFrac = new Map(
@@ -21,7 +38,7 @@ function clamp01(v: number) {
 
 function beatProgress(overall: number, beatIndex: number) {
   const start = beatIndex * 0.25;
-  return clamp01((overall - start) / 0.25);
+  return clamp01((overall - start) / (0.25 * BEAT_COMPLETE_FRACTION));
 }
 
 /** Drives the "Made" scroll story: as the section's own scroll range is scrubbed, the
@@ -30,6 +47,8 @@ function beatProgress(overall: number, beatIndex: number) {
  * exploded view uses, but writes positions directly each frame instead of tweening,
  * since ScrollTrigger's scrub already supplies the easing. */
 export function useMadeScrollStory(getRefs: () => KeyboardRefs) {
+  const invalidate = useThree((s) => s.invalidate);
+
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reducedMotion) return;
@@ -48,14 +67,18 @@ export function useMadeScrollStory(getRefs: () => KeyboardRefs) {
 
       refs.keyGroups.forEach((group, id) => {
         const distFrac = keyDistFrac.get(id) ?? 0;
-        const delay = distFrac * 0.5;
-        const localP3 = clamp01((p3 - delay) / (1 - delay || 1));
+        const delay = distFrac * KEY_STAGGER_MAX_DELAY;
+        const localP3 = clamp01((p3 - delay) / (1 - delay));
         const keyAmount = localP3 * (1 - p4);
         group.position.y = KEY_REST_Y + keyAmount * KEY_RISE;
       });
 
       const beat = Math.min(3, Math.floor(progress * 4));
       useScrollStoryStore.getState().setBeat(beat);
+
+      // These are raw mutations on refs, outside r3f's own reconciler — in
+      // frameloop="demand" mode nothing else would tell the canvas a new frame is needed.
+      invalidate();
     }
 
     const trigger = ScrollTrigger.create({

@@ -16,6 +16,11 @@ export interface KeycapSetOption {
   swatch: string;
   base: string;
   mod: string;
+  /** Legend colour on base-coloured keys — chosen to contrast with `base`. */
+  legendColor: string;
+  /** Legend colour on mod-coloured keys — null means no legend at all (Monochrome's
+   * "legends-less" mods, per the brand copy — every other set prints on its mods too). */
+  modLegendColor: string | null;
   priceDelta: number;
 }
 
@@ -50,10 +55,46 @@ export const CASE_FINISHES: CaseFinishOption[] = [
 ];
 
 export const KEYCAP_SETS: KeycapSetOption[] = [
-  { id: 'white', label: 'Blank White', swatch: '#f1f1ee', base: '#f1f1ee', mod: '#f1f1ee', priceDelta: 0 },
-  { id: 'charcoal', label: 'Blank Charcoal', swatch: '#3a3a3d', base: '#3a3a3d', mod: '#3a3a3d', priceDelta: 0 },
-  { id: 'grey-orange', label: 'Grey / Orange', swatch: '#9a9a95', base: '#9a9a95', mod: '#9a9a95', priceDelta: 12 },
-  { id: 'mono', label: 'Monochrome', swatch: '#3a3a3d', base: '#3a3a3d', mod: '#b8b8b4', priceDelta: 12 },
+  {
+    id: 'white',
+    label: 'Blank White',
+    swatch: '#f1f1ee',
+    base: '#f1f1ee',
+    mod: '#f1f1ee',
+    legendColor: '#242422',
+    modLegendColor: '#242422',
+    priceDelta: 0,
+  },
+  {
+    id: 'charcoal',
+    label: 'Blank Charcoal',
+    swatch: '#3a3a3d',
+    base: '#3a3a3d',
+    mod: '#3a3a3d',
+    legendColor: '#f1f1ee',
+    modLegendColor: '#f1f1ee',
+    priceDelta: 0,
+  },
+  {
+    id: 'grey-orange',
+    label: 'Grey / Orange',
+    swatch: '#9a9a95',
+    base: '#9a9a95',
+    mod: '#9a9a95',
+    legendColor: '#242422',
+    modLegendColor: '#242422',
+    priceDelta: 12,
+  },
+  {
+    id: 'mono',
+    label: 'Monochrome',
+    swatch: '#3a3a3d',
+    base: '#3a3a3d',
+    mod: '#b8b8b4',
+    legendColor: '#d8d8d4',
+    modLegendColor: null,
+    priceDelta: 12,
+  },
 ];
 
 export const ACCENTS: AccentOption[] = [

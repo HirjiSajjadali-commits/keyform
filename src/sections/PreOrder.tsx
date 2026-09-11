@@ -28,49 +28,51 @@ export function PreOrder() {
 
   return (
     <section id="pre-order" className={styles.section}>
-      <div>
-        <p className={`mono ${styles.kicker}`}>PRE-ORDER</p>
-        <h2 className={styles.title}>Reserve your build slot.</h2>
-      </div>
-
-      <div className={`mono ${styles.recap}`}>
-        {recap.map((row) => (
-          <div key={row.key} className={styles.recapRow}>
-            <span className={styles.recapKey}>{row.key}</span>
-            <span>{row.value}</span>
-          </div>
-        ))}
-        <div className={styles.recapTotal}>
-          <span>Total</span>
-          <span>£{price}</span>
+      <div className={styles.content}>
+        <div>
+          <p className={`mono ${styles.kicker}`}>PRE-ORDER</p>
+          <h2 className={styles.title}>Reserve your build slot.</h2>
         </div>
+
+        <div className={`mono ${styles.recap}`}>
+          {recap.map((row) => (
+            <div key={row.key} className={styles.recapRow}>
+              <span className={styles.recapKey}>{row.key}</span>
+              <span>{row.value}</span>
+            </div>
+          ))}
+          <div className={styles.recapTotal}>
+            <span>Total</span>
+            <span>£{price}</span>
+          </div>
+        </div>
+
+        {submitted ? (
+          <p className={`mono ${styles.confirmation}`}>
+            Noted — there's no real order behind this, but that's exactly the request a production
+            form would have captured.
+          </p>
+        ) : (
+          <form className={styles.form} action={FORMSPREE_ENDPOINT} method="POST" onSubmit={handleSubmit}>
+            <label className="visually-hidden" htmlFor="preorder-email">
+              Email address
+            </label>
+            <input
+              id="preorder-email"
+              className={styles.emailInput}
+              type="email"
+              name="email"
+              placeholder="you@example.com"
+              required
+            />
+            <button type="submit" className={`mono ${styles.submit}`}>
+              Notify me
+            </button>
+          </form>
+        )}
+
+        <p className={`mono ${styles.fine}`}>Concept project. Not a real product.</p>
       </div>
-
-      {submitted ? (
-        <p className={`mono ${styles.confirmation}`}>
-          Noted — there's no real order behind this, but that's exactly the request a production
-          form would have captured.
-        </p>
-      ) : (
-        <form className={styles.form} action={FORMSPREE_ENDPOINT} method="POST" onSubmit={handleSubmit}>
-          <label className="visually-hidden" htmlFor="preorder-email">
-            Email address
-          </label>
-          <input
-            id="preorder-email"
-            className={styles.emailInput}
-            type="email"
-            name="email"
-            placeholder="you@example.com"
-            required
-          />
-          <button type="submit" className={`mono ${styles.submit}`}>
-            Notify me
-          </button>
-        </form>
-      )}
-
-      <p className={`mono ${styles.fine}`}>Concept project. Not a real product.</p>
     </section>
   );
 }

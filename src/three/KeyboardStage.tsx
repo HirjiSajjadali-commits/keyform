@@ -4,6 +4,11 @@ import { CASE_FINISHES, ACCENTS, KEYCAP_SETS, PLATES, findOption } from '../stor
 import { KeyboardScene } from './KeyboardScene';
 import styles from './KeyboardStage.module.css';
 
+// White text reads against every accent swatch except the White accent itself, where it
+// has to flip to dark ink instead.
+const ACCENT_LEGEND_LIGHT = '#ffffff';
+const ACCENT_LEGEND_DARK = '#16161a';
+
 /**
  * The single <Canvas> for the whole page, mounted once here and kept fixed behind
  * everything. Sections reveal it by staying transparent (Hero, Configurator, and later
@@ -20,6 +25,7 @@ export function KeyboardStage() {
   const keycapSet = findOption(KEYCAP_SETS, keycaps);
   const accentColor = findOption(ACCENTS, accent).color;
   const plateColor = findOption(PLATES, plate).color;
+  const accentLegendColor = accent === 'white' ? ACCENT_LEGEND_DARK : ACCENT_LEGEND_LIGHT;
 
   return (
     <div className={styles.stage} aria-hidden="true">
@@ -30,6 +36,9 @@ export function KeyboardStage() {
         modColor={keycapSet.mod}
         accentColor={accentColor}
         plateColor={plateColor}
+        legendColor={keycapSet.legendColor}
+        modLegendColor={keycapSet.modLegendColor}
+        accentLegendColor={accentLegendColor}
       />
     </div>
   );

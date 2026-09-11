@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { useThree } from '@react-three/fiber';
 import type { KeyboardRefs } from './Keyboard';
 import { useConfiguratorStore } from '../store/configurator';
 import { useAudioStore } from '../store/audio';
@@ -18,9 +19,20 @@ function isTextInputFocused(): boolean {
 }
 
 /** Wires window keydown/keyup to press-animate + glow the matching key mesh (event.code
- * doubles as our layout's key id) and play a switch-appropriate click. */
+ * doubles as our layout's key id) and play a switch-appropriate click.
+ *
+ * Deliberately keyed on event.code, not event.key: code identifies the physical key
+ * position and is stable across language/layout, while key produces the actual character
+ * (which would break for non-QWERTY layouts or non-Latin input). This also means the
+ * Windows/Cmd key needs no special-casing for Mac — per the UI Events code spec, that
+ * physical position reports code "MetaLeft"/"MetaRight" on every platform including
+ * macOS, which is exactly the id our layout already uses for it.
+ *
+ * Any code with no matching mesh (missing nav cluster on a laptop, ISO vs ANSI layout,
+ * etc.) is silently ignored below — that's an expected, not exceptional, outcome. */
 export function useTypeTest(getRefs: () => KeyboardRefs) {
   const pressedCodes = useRef<Set<string>>(new Set());
+  const invalidate = useThree((s) => s.invalidate);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -36,9 +48,9 @@ export function useTypeTest(getRefs: () => KeyboardRefs) {
       const material = refs.keyMaterials.get(e.code);
       if (!group || !material) return;
 
-      gsap.to(group.position, { y: `-=${PRESS_OFFSET}`, duration: PRESS_DURATION, ease: 'power2.out' });
+      gsap.to(group.position, { y: `-=${PRESS_OFFSET}`, duration: PRESS_DURATION, ease: 'power2.out', onUpdate: invalidate });
       material.emissive.set(BRAND_ACCENT);
-      gsap.to(material, { emissiveIntensity: 0.8, duration: PRESS_DURATION, ease: 'power2.out' });
+      gsap.to(material, { emissiveIntensity: 0.8, duration: PRESS_DURATION, ease: 'power2.out', onUpdate: invalidate });
 
       if (!useAudioStore.getState().muted) {
         playSwitchSound(useConfiguratorStore.getState().switches, 'down');
@@ -54,8 +66,8 @@ export function useTypeTest(getRefs: () => KeyboardRefs) {
       const material = refs.keyMaterials.get(e.code);
       if (!group || !material) return;
 
-      gsap.to(group.position, { y: `+=${PRESS_OFFSET}`, duration: RELEASE_DURATION, ease: 'power2.out' });
-      gsap.to(material, { emissiveIntensity: 0, duration: RELEASE_DURATION, ease: 'power2.out' });
+      gsap.to(group.position, { y: `+=${PRESS_OFFSET}`, duration: RELEASE_DURATION, ease: 'power2.out', onUpdate: invalidate });
+      gsap.to(material, { emissiveIntensity: 0, duration: RELEASE_DURATION, ease: 'power2.out', onUpdate: invalidate });
 
       if (!useAudioStore.getState().muted) {
         playSwitchSound(useConfiguratorStore.getState().switches, 'up');

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import gsap from 'gsap';
+import { useThree } from '@react-three/fiber';
 import type { Group } from 'three';
 import { KEY_LAYOUT } from './layout';
 import { CASE_CENTER_X, CASE_CENTER_Z, TRAY_FLOOR_Y, KEY_HEIGHT } from './dimensions';
@@ -26,13 +27,18 @@ export interface ExplodedRefs {
  * staggered wave keyed off distance from the board's centre. Reverses cleanly since every
  * tween targets an absolute position rather than a relative offset. */
 export function useExplodedView(getRefs: () => ExplodedRefs, exploded: boolean) {
+  const invalidate = useThree((s) => s.invalidate);
+
   useEffect(() => {
     if (useScrollStoryStore.getState().active) return;
 
     const refs = getRefs();
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const duration = reducedMotion ? 0 : DURATION;
-    const tl = gsap.timeline();
+    // onUpdate fires every tick while ANY child tween in this timeline is animating — in
+    // frameloop="demand" mode nothing else would tell the canvas a new frame is needed,
+    // since these are raw ref mutations outside r3f's own reconciler.
+    const tl = gsap.timeline({ onUpdate: invalidate });
 
     if (refs.caseGroup) {
       tl.to(refs.caseGroup.position, { y: exploded ? CASE_DROP : 0, duration, ease: EASE }, 0);

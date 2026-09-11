@@ -4,6 +4,9 @@
   padding: clamp(64px, 10vh, 120px) clamp(16px, 6vw, 64px);
   background: var(--bg);
   border-bottom: 1px solid var(--line);
+}
+
+.content {
   display: grid;
   gap: clamp(32px, 6vw, 64px);
   max-width: 1000px;

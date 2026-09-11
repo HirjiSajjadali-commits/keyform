@@ -1,5 +1,8 @@
 import { BOARD_WIDTH_MM, BOARD_DEPTH_MM } from './layout';
 
+export const SCENE_SCALE = 0.01; // 1 Three.js unit = 100mm — keeps the scene in a sane
+// range for default camera/shadow/light parameters instead of working in raw millimetres.
+
 export const KEY_HEIGHT = 9;
 export const KEY_DEPTH = 18;
 export const KEY_RADIUS = 1.2;
@@ -31,3 +34,16 @@ export const CASE_CENTER_X = BOARD_WIDTH_MM / 2;
 export const CASE_CENTER_Z = (BOARD_DEPTH_MM + MARGIN_FRONT - MARGIN_BACK) / 2;
 
 export const BOARD_TILT_DEG = 6;
+
+// Bounding sphere (in mm, board-local) sized to comfortably contain the board in every
+// state the camera needs to frame — assembled AND fully exploded (case drops 18mm,
+// keycaps rise 22mm — see useExplodedView.ts). A sphere is a deliberately conservative
+// (not tightest-possible) fit: it's rotation-invariant, so "does the whole board fit"
+// stays true regardless of the camera's orbit angle, which a tight box fit wouldn't
+// guarantee without also tracking orientation.
+const EXPLODED_CASE_DROP = 18;
+const EXPLODED_KEY_RISE = 22;
+const BOUNDING_MIN_Y = CASE_BOTTOM_Y - EXPLODED_CASE_DROP;
+const BOUNDING_MAX_Y = TRAY_FLOOR_Y + KEY_HEIGHT + EXPLODED_KEY_RISE;
+
+export const BOARD_BOUNDING_RADIUS_MM = Math.hypot(CASE_WIDTH / 2, CASE_DEPTH / 2, (BOUNDING_MAX_Y - BOUNDING_MIN_Y) / 2);
