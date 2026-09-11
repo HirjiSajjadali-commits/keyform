@@ -7,6 +7,7 @@ import { Keycap } from './Keycap';
 import { ExplodedLabels } from './ExplodedLabels';
 import { useExplodedView } from './useExplodedView';
 import { useTypeTest } from './useTypeTest';
+import { useMadeScrollStory } from './useMadeScrollStory';
 import { useConfiguratorStore } from '../store/configurator';
 
 export interface KeyboardRefs {
@@ -50,6 +51,7 @@ export function Keyboard({ caseColor, keycapColor, modColor, accentColor, plateC
   const exploded = useConfiguratorStore((s) => s.exploded);
   useExplodedView(() => refs.current, exploded);
   useTypeTest(() => refs.current);
+  useMadeScrollStory(() => refs.current);
 
   return (
     <group rotation={[BOARD_TILT_DEG * DEG_TO_RAD, 0, 0]}>

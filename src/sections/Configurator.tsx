@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useConfiguratorStore, computePrice } from '../store/configurator';
+import { useScrollStoryStore } from '../store/scrollStory';
 import { ACCENTS, CASE_FINISHES, KEYCAP_SETS, PLATES, SWITCHES, findOption } from '../store/options';
 import { RadioSwatchGroup } from '../components/RadioSwatchGroup';
 import { AddToCartDrawer } from '../components/AddToCartDrawer';
@@ -7,6 +8,7 @@ import styles from './Configurator.module.css';
 
 export function Configurator() {
   const state = useConfiguratorStore();
+  const scrollStoryActive = useScrollStoryStore((s) => s.active);
   const [announcement, setAnnouncement] = useState('');
   const [cartOpen, setCartOpen] = useState(false);
 
@@ -36,6 +38,8 @@ export function Configurator() {
               type="button"
               className={`mono ${styles.explodeToggle}`}
               aria-pressed={state.exploded}
+              disabled={scrollStoryActive}
+              title={scrollStoryActive ? 'Driven by the scroll story below' : undefined}
               onClick={state.toggleExploded}
             >
               <span className={state.exploded ? styles.dim : undefined}>ASSEMBLED</span>

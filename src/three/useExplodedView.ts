@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import type { Group } from 'three';
 import { KEY_LAYOUT } from './layout';
 import { CASE_CENTER_X, CASE_CENTER_Z, TRAY_FLOOR_Y, KEY_HEIGHT } from './dimensions';
+import { useScrollStoryStore } from '../store/scrollStory';
 
 const KEY_REST_Y = TRAY_FLOOR_Y + KEY_HEIGHT / 2;
 
@@ -26,6 +27,8 @@ export interface ExplodedRefs {
  * tween targets an absolute position rather than a relative offset. */
 export function useExplodedView(getRefs: () => ExplodedRefs, exploded: boolean) {
   useEffect(() => {
+    if (useScrollStoryStore.getState().active) return;
+
     const refs = getRefs();
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const duration = reducedMotion ? 0 : DURATION;

@@ -1,0 +1,122 @@
+.section {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+}
+
+.tall {
+  height: 400vh;
+}
+
+.sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 clamp(16px, 6vw, 64px) clamp(48px, 8vh, 96px);
+}
+
+.captionStack {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  min-height: 200px;
+}
+
+.caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.caption[data-active='true'] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.kicker {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.beatTitle {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.beatText {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.5;
+  max-width: 40ch;
+}
+
+.ctaLink {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border-bottom: 1px solid var(--accent);
+  padding-bottom: 2px;
+}
+
+.progress {
+  display: flex;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.progressDot {
+  width: 24px;
+  height: 2px;
+  background: var(--line);
+}
+
+.progressDot[data-active='true'] {
+  background: var(--accent);
+}
+
+/* Reduced-motion fallback: static stacked beats, no pinning, no scroll-scrub */
+.staticSection {
+  padding: clamp(64px, 10vh, 120px) clamp(16px, 6vw, 64px);
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+
+.staticGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  margin-top: clamp(32px, 5vw, 56px);
+}
+
+.staticBeat {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 20px;
+  align-items: center;
+}
+
+.staticFigure {
+  width: 100px;
+  height: 56px;
+  color: var(--accent);
+}
+
+@media (min-width: 640px) {
+  .staticGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

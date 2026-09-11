@@ -15,6 +15,7 @@ interface ConfiguratorState {
   setSwitches: (v: SwitchId) => void;
   setPlate: (v: PlateId) => void;
   toggleExploded: () => void;
+  setExploded: (v: boolean) => void;
 }
 
 export const useConfiguratorStore = create<ConfiguratorState>((set) => ({
@@ -30,6 +31,7 @@ export const useConfiguratorStore = create<ConfiguratorState>((set) => ({
   setSwitches: (v) => set({ switches: v }),
   setPlate: (v) => set({ plate: v }),
   toggleExploded: () => set((s) => ({ exploded: !s.exploded })),
+  setExploded: (v) => set({ exploded: v }),
 }));
 
 export function computePrice(state: Pick<ConfiguratorState, 'keycaps' | 'switches' | 'plate'>): number {

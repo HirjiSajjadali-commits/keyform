@@ -69,6 +69,15 @@
   border-color: var(--accent);
 }
 
+.explodeToggle:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.explodeToggle:disabled:hover {
+  border-color: var(--line);
+}
+
 .slash {
   color: var(--muted);
 }
