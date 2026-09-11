@@ -6,6 +6,9 @@ import { Keyboard } from './Keyboard';
 import { CASE_WIDTH, CASE_DEPTH, CASE_BOTTOM_Y } from './dimensions';
 import { SceneEffects } from './SceneEffects';
 import { useEased } from '../hooks/useEased';
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
+import { useIsMobile } from '../hooks/useIsMobile';
+import { useCanvasVisibility } from '../hooks/useCanvasVisibility';
 
 export const SCENE_SCALE = 0.01; // 1 Three.js unit = 100mm — keeps the scene in a sane
 // range for default camera/shadow/light parameters instead of working in raw millimetres.
@@ -33,10 +36,14 @@ const THEME_SHADOW_OPACITY: Record<'light' | 'dark', number> = { light: 0.35, da
 export function KeyboardScene({ theme, caseColor, keycapColor, modColor, accentColor, plateColor }: KeyboardSceneProps) {
   const [autoRotate, setAutoRotate] = useState(true);
   const shadowOpacity = useEased(THEME_SHADOW_OPACITY[theme]);
+  const reducedMotion = usePrefersReducedMotion();
+  const isMobile = useIsMobile();
+  const canvasVisible = useCanvasVisibility();
 
   return (
     <Canvas
-      dpr={[1, 2]}
+      dpr={isMobile ? [1, 1.5] : [1, 2]}
+      frameloop={canvasVisible ? 'always' : 'demand'}
       shadows={{ type: THREE.VSMShadowMap }}
       gl={{
         powerPreference: 'high-performance',
@@ -49,14 +56,14 @@ export function KeyboardScene({ theme, caseColor, keycapColor, modColor, accentC
       <PerspectiveCamera makeDefault fov={35} position={CAMERA_POSITION} />
       <OrbitControls
         enablePan={false}
-        enableZoom
+        enableZoom={!isMobile}
         minDistance={CAMERA_DISTANCE * 0.7}
         maxDistance={CAMERA_DISTANCE * 1.3}
         minPolarAngle={0.6}
         maxPolarAngle={1.45}
         enableDamping
         dampingFactor={0.08}
-        autoRotate={autoRotate}
+        autoRotate={!reducedMotion && autoRotate}
         autoRotateSpeed={0.6}
         onStart={() => setAutoRotate(false)}
       />
@@ -79,7 +86,7 @@ export function KeyboardScene({ theme, caseColor, keycapColor, modColor, accentC
         scale={CONTACT_SHADOW_SCALE}
         blur={2.5}
         far={0.4}
-        resolution={1024}
+        resolution={isMobile ? 512 : 1024}
         opacity={shadowOpacity}
       />
     </Canvas>

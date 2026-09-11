@@ -43,7 +43,7 @@
 .kicker {
   font-size: 12px;
   letter-spacing: 0.12em;
-  color: var(--accent);
+  color: var(--accent-text);
   margin-bottom: 8px;
 }
 
@@ -67,7 +67,7 @@
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   border-bottom: 1px solid var(--accent);
   padding-bottom: 2px;
 }

@@ -25,7 +25,6 @@ interface KeyboardProps {
   modColor: string;
   accentColor: string;
   plateColor: string;
-  refsOut?: (refs: KeyboardRefs) => void;
 }
 
 const DEG_TO_RAD = Math.PI / 180;
@@ -36,7 +35,7 @@ function colorForKey(type: 'default' | 'accent' | 'mod', keycapColor: string, mo
   return keycapColor;
 }
 
-export function Keyboard({ caseColor, keycapColor, modColor, accentColor, plateColor, refsOut }: KeyboardProps) {
+export function Keyboard({ caseColor, keycapColor, modColor, accentColor, plateColor }: KeyboardProps) {
   const refs = useRef<KeyboardRefs>({
     keyGroups: new Map(),
     keyMaterials: new Map(),
@@ -45,8 +44,6 @@ export function Keyboard({ caseColor, keycapColor, modColor, accentColor, plateC
     caseGroup: null,
     plateGroup: null,
   });
-
-  if (refsOut) refsOut(refs.current);
 
   const exploded = useConfiguratorStore((s) => s.exploded);
   useExplodedView(() => refs.current, exploded);

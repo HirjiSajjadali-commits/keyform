@@ -9,7 +9,7 @@
 .kicker {
   font-size: 12px;
   letter-spacing: 0.12em;
-  color: var(--accent);
+  color: var(--accent-text);
   margin-bottom: 6px;
 }
 

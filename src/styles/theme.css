@@ -6,6 +6,10 @@
   --line: #e0e0dc;
   --accent: #ff5a1f;
   --accent-ink: #16161a;
+  /* --accent itself only hits ~3.1:1 against white/--bg — enough for a swatch or a large
+     graphical element, not for small text. This is a darkened version kept close to the
+     same hue, used wherever --accent colours actual text (kickers, small labels). */
+  --accent-text: #bf4317;
 
   --shadow-ambient: rgba(22, 22, 26, 0.08);
 
@@ -23,6 +27,8 @@
   --line: #26262a;
   --accent: #ff5a1f;
   --accent-ink: #0a0a0b;
+  /* --accent already clears 6:1+ against the dark surfaces, so no darkening needed here. */
+  --accent-text: #ff5a1f;
 
   --shadow-ambient: rgba(0, 0, 0, 0.4);
 
