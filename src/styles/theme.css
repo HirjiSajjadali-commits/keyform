@@ -1,0 +1,41 @@
+:root {
+  --bg: #f4f4f2;
+  --surface: #ffffff;
+  --ink: #16161a;
+  --muted: #6b6b70;
+  --line: #e0e0dc;
+  --accent: #ff5a1f;
+  --accent-ink: #16161a;
+
+  --shadow-ambient: rgba(22, 22, 26, 0.08);
+
+  --font-display: 'General Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SF Mono', ui-monospace, monospace;
+
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --bg: #0a0a0b;
+  --surface: #141417;
+  --ink: #f2f2f0;
+  --muted: #9a9aa0;
+  --line: #26262a;
+  --accent: #ff5a1f;
+  --accent-ink: #0a0a0b;
+
+  --shadow-ambient: rgba(0, 0, 0, 0.4);
+
+  color-scheme: dark;
+}
+
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Elements whose own transitions/animations shouldn't be muddied by the blanket rule above */
+canvas,
+svg,
+[data-no-theme-transition] {
+  transition: none;
+}

@@ -1,0 +1,27 @@
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  padding: 10px 12px;
+  min-height: 44px;
+  min-width: 44px;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  color: var(--ink);
+}
+
+.toggle:hover {
+  border-color: var(--accent);
+}
+
+.slash {
+  color: var(--muted);
+}
+
+.dim {
+  color: var(--muted);
+}

@@ -1,0 +1,25 @@
+.footer {
+  padding: 40px clamp(16px, 6vw, 64px) 32px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mark {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.55;
+  color: var(--ink);
+}
+
+.mark a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.mark a:hover {
+  color: var(--accent);
+}
