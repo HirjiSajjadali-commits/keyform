@@ -1,0 +1,48 @@
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-bottom: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.canvasLayer {
+  position: absolute;
+  inset: 0;
+}
+
+.canvasLayer canvas {
+  outline: none;
+}
+
+.copy {
+  position: relative;
+  z-index: 1;
+  padding: 0 clamp(16px, 6vw, 64px) clamp(48px, 8vh, 96px);
+  pointer-events: none;
+}
+
+.kicker {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 7vw, 76px);
+  font-weight: 600;
+  line-height: 1.05;
+  color: var(--ink);
+  max-width: 16ch;
+}
+
+.scrollCue {
+  margin-top: 24px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
