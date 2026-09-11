@@ -9,21 +9,25 @@ export interface KeyboardRefs {
   keyGroups: Map<string, Group>;
   keyMaterials: Map<string, MeshStandardMaterial>;
   caseMaterial: MeshStandardMaterial | null;
+  plateMaterial: MeshStandardMaterial | null;
 }
 
 interface KeyboardProps {
   caseColor: string;
   keycapColor: string;
+  accentColor: string;
+  plateColor: string;
   refsOut?: (refs: KeyboardRefs) => void;
 }
 
 const DEG_TO_RAD = Math.PI / 180;
 
-export function Keyboard({ caseColor, keycapColor, refsOut }: KeyboardProps) {
+export function Keyboard({ caseColor, keycapColor, accentColor, plateColor, refsOut }: KeyboardProps) {
   const refs = useRef<KeyboardRefs>({
     keyGroups: new Map(),
     keyMaterials: new Map(),
     caseMaterial: null,
+    plateMaterial: null,
   });
 
   if (refsOut) refsOut(refs.current);
@@ -33,15 +37,19 @@ export function Keyboard({ caseColor, keycapColor, refsOut }: KeyboardProps) {
       <group position={[-CASE_CENTER_X, 0, -CASE_CENTER_Z]}>
         <Case
           color={caseColor}
-          materialRef={(el) => {
+          plateColor={plateColor}
+          caseMaterialRef={(el) => {
             refs.current.caseMaterial = el;
+          }}
+          plateMaterialRef={(el) => {
+            refs.current.plateMaterial = el;
           }}
         />
         {KEY_LAYOUT.map((keyDef) => (
           <Keycap
             key={keyDef.id}
             keyDef={keyDef}
-            color={keycapColor}
+            color={keyDef.type === 'accent' ? accentColor : keycapColor}
             groupRef={(el) => {
               if (el) refs.current.keyGroups.set(keyDef.id, el);
               else refs.current.keyGroups.delete(keyDef.id);

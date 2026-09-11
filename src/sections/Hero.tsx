@@ -4,12 +4,11 @@ import styles from './Hero.module.css';
 
 export function Hero() {
   const theme = useThemeStore((s) => s.theme);
-  const backgroundColor = theme === 'dark' ? '#0a0a0b' : '#f4f4f2';
 
   return (
     <section id="top" className={styles.hero}>
       <div className={styles.canvasLayer} aria-hidden="true">
-        <KeyboardScene backgroundColor={backgroundColor} />
+        <KeyboardScene theme={theme} />
       </div>
       <div className={styles.copy}>
         <p className={`mono ${styles.kicker}`}>KF-TKL-01 · 6063-T5 ALUMINIUM · 87 KEYS</p>

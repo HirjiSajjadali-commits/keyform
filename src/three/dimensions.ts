@@ -14,11 +14,13 @@ export const MARGIN_BACK = 10; // function-row side
 export const MARGIN_SIDE = 9;
 export const MARGIN_FRONT = 14; // spacebar side
 
-// Phase 1: keys sit directly on a flat-topped slab. Phase 2 recesses the rim above this
-// same floor height, so nothing here needs to move when the recess is added.
 export const TRAY_FLOOR_Y = 0;
-export const CASE_TOP_Y = TRAY_FLOOR_Y; // Phase 2: TRAY_FLOOR_Y + RECESS_DEPTH
+export const CASE_TOP_Y = TRAY_FLOOR_Y + RECESS_DEPTH;
 export const CASE_BOTTOM_Y = CASE_TOP_Y - CASE_HEIGHT;
+export const BASE_SLAB_HEIGHT = CASE_HEIGHT - RECESS_DEPTH;
+
+export const PLATE_TRIM_WIDTH = 2;
+export const PLATE_TRIM_HEIGHT = 0.8;
 
 export const CASE_WIDTH = BOARD_WIDTH_MM + MARGIN_SIDE * 2;
 export const CASE_DEPTH = BOARD_DEPTH_MM + MARGIN_BACK + MARGIN_FRONT;
