@@ -35,15 +35,19 @@ export const CASE_CENTER_Z = (BOARD_DEPTH_MM + MARGIN_FRONT - MARGIN_BACK) / 2;
 
 export const BOARD_TILT_DEG = 6;
 
-// Bounding sphere (in mm, board-local) sized to comfortably contain the board in every
-// state the camera needs to frame — assembled AND fully exploded (case drops 18mm,
-// keycaps rise 22mm — see useExplodedView.ts). A sphere is a deliberately conservative
-// (not tightest-possible) fit: it's rotation-invariant, so "does the whole board fit"
-// stays true regardless of the camera's orbit angle, which a tight box fit wouldn't
-// guarantee without also tracking orientation.
+// Camera-fit envelope (mm, board-local), sized to contain the board in every state the
+// camera needs to frame — assembled AND fully exploded (case drops 18mm, keycaps rise
+// 22mm — see useExplodedView.ts). Kept as separate horizontal/vertical figures rather
+// than one blended bounding sphere: the board is a wide, flat object (~2.5:1 footprint),
+// so a sphere sized off the diagonal would treat "how tall could this look" as if it were
+// as tall as it is wide — hugely overstating the vertical extent and pushing the camera
+// back far more than the actual (thin) profile ever needs. The board only yaws around Y
+// (OrbitControls' polar range is clamped), so a horizontal radius that's rotation-safe
+// for any yaw, paired with the real vertical half-height, is both tighter and correct.
 const EXPLODED_CASE_DROP = 18;
 const EXPLODED_KEY_RISE = 22;
 const BOUNDING_MIN_Y = CASE_BOTTOM_Y - EXPLODED_CASE_DROP;
 const BOUNDING_MAX_Y = TRAY_FLOOR_Y + KEY_HEIGHT + EXPLODED_KEY_RISE;
 
-export const BOARD_BOUNDING_RADIUS_MM = Math.hypot(CASE_WIDTH / 2, CASE_DEPTH / 2, (BOUNDING_MAX_Y - BOUNDING_MIN_Y) / 2);
+export const BOARD_HORIZONTAL_RADIUS_MM = Math.hypot(CASE_WIDTH / 2, CASE_DEPTH / 2);
+export const BOARD_VERTICAL_HALF_HEIGHT_MM = (BOUNDING_MAX_Y - BOUNDING_MIN_Y) / 2;

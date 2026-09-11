@@ -3,10 +3,11 @@ import { useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
-import { BOARD_BOUNDING_RADIUS_MM, SCENE_SCALE } from './dimensions';
+import { BOARD_HORIZONTAL_RADIUS_MM, BOARD_VERTICAL_HALF_HEIGHT_MM, SCENE_SCALE } from './dimensions';
 import type { CameraPose } from '../hooks/useCameraPose';
 
-const BOARD_RADIUS = BOARD_BOUNDING_RADIUS_MM * SCENE_SCALE;
+const HORIZONTAL_RADIUS = BOARD_HORIZONTAL_RADIUS_MM * SCENE_SCALE;
+const VERTICAL_HALF_HEIGHT = BOARD_VERTICAL_HALF_HEIGHT_MM * SCENE_SCALE;
 const FOV_DEG = 35;
 // Same front-3/4-elevated look established in Phase 2, now just a direction — distance is
 // computed per pose/viewport so the board is never cropped, however narrow the screen.
@@ -14,11 +15,20 @@ const CAMERA_DIRECTION = new THREE.Vector3(0.35, 0.28, 0.55).normalize();
 
 const POSE_MARGIN: Record<CameraPose, number> = { wide: 1.35, close: 1.15 };
 
-function fitDistance(radius: number, aspect: number, margin: number) {
+/** Distance needed to fit the board's real (flat, wide) envelope in frame — checked
+ * separately per axis rather than via one blended bounding sphere. A sphere sized off the
+ * board's diagonal would size the *vertical* fit as if the board were as tall as it is
+ * wide (it's roughly 2.5:1, wide and flat), which both overstates distance and makes the
+ * board's on-screen size stop growing with a wider viewport once the vertical FOV alone
+ * is satisfied. Fitting width against horizontal FOV and height against vertical FOV
+ * separately — then taking whichever needs more room — stays just as crop-safe while
+ * actually using extra width on a wide screen. */
+function fitDistance(aspect: number, margin: number) {
   const vFov = THREE.MathUtils.degToRad(FOV_DEG);
   const hFov = 2 * Math.atan(Math.tan(vFov / 2) * aspect);
-  const limitingFov = Math.min(vFov, hFov);
-  return (radius * margin) / Math.sin(limitingFov / 2);
+  const distanceForWidth = (HORIZONTAL_RADIUS * margin) / Math.sin(hFov / 2);
+  const distanceForHeight = (VERTICAL_HALF_HEIGHT * margin) / Math.sin(vFov / 2);
+  return Math.max(distanceForWidth, distanceForHeight);
 }
 
 interface CameraRigProps {
@@ -38,7 +48,7 @@ export function CameraRig({ pose, isMobile, reducedMotion }: CameraRigProps) {
   // flash of the camera at its previous pose's position.
   useLayoutEffect(() => {
     const aspect = size.width / size.height;
-    const distance = fitDistance(BOARD_RADIUS, aspect, POSE_MARGIN[pose]);
+    const distance = fitDistance(aspect, POSE_MARGIN[pose]);
     camera.position.copy(CAMERA_DIRECTION).multiplyScalar(distance);
     camera.lookAt(0, 0, 0);
     const controls = controlsRef.current;
@@ -58,7 +68,7 @@ export function CameraRig({ pose, isMobile, reducedMotion }: CameraRigProps) {
   // a deliberately zoomed-out user back in.
   useEffect(() => {
     const aspect = size.width / size.height;
-    const minSafeDistance = fitDistance(BOARD_RADIUS, aspect, POSE_MARGIN[pose]);
+    const minSafeDistance = fitDistance(aspect, POSE_MARGIN[pose]);
     if (camera.position.length() < minSafeDistance) {
       camera.position.setLength(minSafeDistance);
       invalidate();
@@ -66,7 +76,7 @@ export function CameraRig({ pose, isMobile, reducedMotion }: CameraRigProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [size.width, size.height]);
 
-  const baseDistance = fitDistance(BOARD_RADIUS, size.width / size.height, POSE_MARGIN[pose]);
+  const baseDistance = fitDistance(size.width / size.height, POSE_MARGIN[pose]);
 
   return (
     <OrbitControls
