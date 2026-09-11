@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { RoundedBox } from '@react-three/drei';
 import type { Group, MeshStandardMaterial } from 'three';
 import type { PlacedKey } from './layout';
 import { U } from './layout';
 import { KEY_HEIGHT, KEY_DEPTH, KEY_RADIUS, KEY_SMOOTHNESS, KEY_FOOTPRINT_SHRINK, TRAY_FLOOR_Y } from './dimensions';
+import { useMaterialColorTween } from '../hooks/useMaterialColorTween';
 
 interface KeycapProps {
   keyDef: PlacedKey;
@@ -13,6 +15,8 @@ interface KeycapProps {
 
 export function Keycap({ keyDef, color, groupRef, materialRef }: KeycapProps) {
   const width = keyDef.w * U - KEY_FOOTPRINT_SHRINK;
+  const [material, setMaterial] = useState<MeshStandardMaterial | null>(null);
+  useMaterialColorTween(material, color);
 
   return (
     <group ref={groupRef} position={[keyDef.x, TRAY_FLOOR_Y + KEY_HEIGHT / 2, keyDef.z]}>
@@ -23,12 +27,18 @@ export function Keycap({ keyDef, color, groupRef, materialRef }: KeycapProps) {
         castShadow
         receiveShadow
       >
-        <meshStandardMaterial ref={materialRef} color={color} metalness={0} roughness={0.55} />
+        <meshStandardMaterial
+          ref={(el) => {
+            setMaterial(el);
+            materialRef?.(el);
+          }}
+          metalness={0}
+          roughness={0.55}
+        />
       </RoundedBox>
       {keyDef.home && (
-        <mesh position={[0, KEY_HEIGHT / 2 - 0.15, KEY_DEPTH / 2 - 3]} castShadow>
+        <mesh position={[0, KEY_HEIGHT / 2 - 0.15, KEY_DEPTH / 2 - 3]} castShadow material={material ?? undefined}>
           <boxGeometry args={[4, 0.4, 1]} />
-          <meshStandardMaterial color={color} metalness={0} roughness={0.55} />
         </mesh>
       )}
     </group>

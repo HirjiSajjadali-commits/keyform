@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { RoundedBox } from '@react-three/drei';
 import * as THREE from 'three';
+import { useMaterialColorTween } from '../hooks/useMaterialColorTween';
 import {
   CASE_WIDTH,
   CASE_DEPTH,
@@ -48,12 +49,8 @@ export function Case({ color, plateColor, caseMaterialRef, plateMaterialRef }: C
     [],
   );
 
-  useEffect(() => {
-    caseMaterial.color.set(color);
-  }, [caseMaterial, color]);
-  useEffect(() => {
-    plateMaterial.color.set(plateColor);
-  }, [plateMaterial, plateColor]);
+  useMaterialColorTween(caseMaterial, color);
+  useMaterialColorTween(plateMaterial, plateColor);
 
   useEffect(() => {
     caseMaterialRef?.(caseMaterial);

@@ -15,6 +15,7 @@ export interface KeyboardRefs {
 interface KeyboardProps {
   caseColor: string;
   keycapColor: string;
+  modColor: string;
   accentColor: string;
   plateColor: string;
   refsOut?: (refs: KeyboardRefs) => void;
@@ -22,7 +23,13 @@ interface KeyboardProps {
 
 const DEG_TO_RAD = Math.PI / 180;
 
-export function Keyboard({ caseColor, keycapColor, accentColor, plateColor, refsOut }: KeyboardProps) {
+function colorForKey(type: 'default' | 'accent' | 'mod', keycapColor: string, modColor: string, accentColor: string) {
+  if (type === 'accent') return accentColor;
+  if (type === 'mod') return modColor;
+  return keycapColor;
+}
+
+export function Keyboard({ caseColor, keycapColor, modColor, accentColor, plateColor, refsOut }: KeyboardProps) {
   const refs = useRef<KeyboardRefs>({
     keyGroups: new Map(),
     keyMaterials: new Map(),
@@ -49,7 +56,7 @@ export function Keyboard({ caseColor, keycapColor, accentColor, plateColor, refs
           <Keycap
             key={keyDef.id}
             keyDef={keyDef}
-            color={keyDef.type === 'accent' ? accentColor : keycapColor}
+            color={colorForKey(keyDef.type, keycapColor, modColor, accentColor)}
             groupRef={(el) => {
               if (el) refs.current.keyGroups.set(keyDef.id, el);
               else refs.current.keyGroups.delete(keyDef.id);

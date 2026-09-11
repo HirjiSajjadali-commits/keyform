@@ -1,4 +1,5 @@
 import { useSmoothScroll } from './hooks/useSmoothScroll';
+import { KeyboardStage } from './three/KeyboardStage';
 import { Header } from './sections/Header';
 import { Hero } from './sections/Hero';
 import { Configurator } from './sections/Configurator';
@@ -14,6 +15,7 @@ function App() {
 
   return (
     <>
+      <KeyboardStage />
       <Header />
       <main>
         <Hero />

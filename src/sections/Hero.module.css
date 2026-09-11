@@ -1,20 +1,11 @@
 .hero {
   position: relative;
+  z-index: 1;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  border-bottom: 1px solid var(--line);
-  overflow: hidden;
-}
-
-.canvasLayer {
-  position: absolute;
-  inset: 0;
-}
-
-.canvasLayer canvas {
-  outline: none;
+  background: transparent;
 }
 
 .copy {

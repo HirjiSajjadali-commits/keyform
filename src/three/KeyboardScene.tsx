@@ -19,23 +19,18 @@ const CONTACT_SHADOW_SCALE: [number, number] = [CASE_WIDTH * SCENE_SCALE * 1.6, 
 
 interface KeyboardSceneProps {
   theme: 'light' | 'dark';
-  caseColor?: string;
-  keycapColor?: string;
-  accentColor?: string;
-  plateColor?: string;
+  caseColor: string;
+  keycapColor: string;
+  modColor: string;
+  accentColor: string;
+  plateColor: string;
 }
 
 const THEME_BG: Record<'light' | 'dark', string> = { light: '#f4f4f2', dark: '#0a0a0b' };
 const THEME_ENV_INTENSITY: Record<'light' | 'dark', number> = { light: 0.9, dark: 0.5 };
 const THEME_SHADOW_OPACITY: Record<'light' | 'dark', number> = { light: 0.35, dark: 0.5 };
 
-export function KeyboardScene({
-  theme,
-  caseColor = '#c7c7c2',
-  keycapColor = '#f1f1ee',
-  accentColor = '#ff5a1f',
-  plateColor = '#d9d9d6',
-}: KeyboardSceneProps) {
+export function KeyboardScene({ theme, caseColor, keycapColor, modColor, accentColor, plateColor }: KeyboardSceneProps) {
   const [autoRotate, setAutoRotate] = useState(true);
   const shadowOpacity = useEased(THEME_SHADOW_OPACITY[theme]);
 
@@ -71,7 +66,13 @@ export function KeyboardScene({
         <Environment preset="studio" />
       </Suspense>
       <group scale={SCENE_SCALE}>
-        <Keyboard caseColor={caseColor} keycapColor={keycapColor} accentColor={accentColor} plateColor={plateColor} />
+        <Keyboard
+          caseColor={caseColor}
+          keycapColor={keycapColor}
+          modColor={modColor}
+          accentColor={accentColor}
+          plateColor={plateColor}
+        />
       </group>
       <ContactShadows
         position={[0, CONTACT_SHADOW_Y, 0]}
