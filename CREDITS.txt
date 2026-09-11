@@ -1,0 +1,43 @@
+KEYFORM — CREDITS
+
+Fonts
+-----
+General Sans (headings + body) — Fontshare, free for commercial use.
+https://www.fontshare.com/fonts/general-sans
+
+IBM Plex Mono (all technical labels, part numbers, prices, UI) — IBM,
+SIL Open Font License 1.1, served via Google Fonts.
+https://fonts.google.com/specimen/IBM+Plex+Mono
+
+Environment / lighting
+-----------------------
+3D scene lighting uses drei's built-in <Environment preset="studio" />,
+which loads a small pre-baked studio HDRI from the pmndrs/drei asset
+CDN at runtime (https://market.pmnd.rs) — no custom HDRI was
+downloaded or bundled for this project.
+
+Audio
+-----
+All switch-click sounds are synthesised at runtime with the Web Audio
+API (see src/lib/switchSound.ts) — no recorded samples or third-party
+audio assets are used anywhere on the site.
+
+Icons / diagrams
+-----------------
+Every icon and diagram (the Details section cards, the exploded-view
+leader labels, the Made scroll-story figures) is a hand-authored inline
+SVG — no icon library or image assets.
+
+Libraries
+---------
+Vite, React, TypeScript, react-three-fiber, @react-three/drei, three.js,
+GSAP (+ ScrollTrigger), Lenis, Zustand — see package.json for exact
+versions. All used under their respective open-source licenses.
+
+Hosting
+-------
+Deployed on Vercel. Source on GitHub.
+
+---
+KEYFORM is a fictional product. This is a concept portfolio project by
+Sajj Studio (https://sajjstudio.co.uk) — nothing here is for sale.
