@@ -39,27 +39,32 @@ interface CameraRigProps {
 
 export function CameraRig({ pose, isMobile, reducedMotion }: CameraRigProps) {
   const { camera, size, invalidate } = useThree();
-  const controlsRef = useRef<OrbitControlsImpl>(null);
+  const controlsRef = useRef<OrbitControlsImpl | null>(null);
   const [autoRotate, setAutoRotate] = useState(true);
+
+  // The single source of truth for "camera at the right distance for this pose/viewport".
+  // Takes the live controls instance as a parameter rather than reading controlsRef.current
+  // itself, because the two call sites that need this (the pose-change effect below, and
+  // the <OrbitControls> ref callback) each have their own most-trustworthy reference to it
+  // at the moment they run — see the ref callback's comment for why that distinction matters.
+  function applyFit(controls: OrbitControlsImpl | null) {
+    const aspect = size.width / size.height;
+    const distance = fitDistance(aspect, POSE_MARGIN[pose]);
+    camera.position.copy(CAMERA_DIRECTION).multiplyScalar(distance);
+    camera.lookAt(0, 0, 0);
+    if (controls) {
+      controls.target.set(0, 0, 0);
+      controls.update();
+    }
+    invalidate();
+  }
 
   // Hard reset on pose change: this is a deliberate "look at the board this way now" cut,
   // so any zoom/pan the user applied to the previous pose should not leak into this one.
   // useLayoutEffect (not useEffect) so this lands before the next paint — no one-frame
   // flash of the camera at its previous pose's position.
   useLayoutEffect(() => {
-    const aspect = size.width / size.height;
-    const distance = fitDistance(aspect, POSE_MARGIN[pose]);
-    camera.position.copy(CAMERA_DIRECTION).multiplyScalar(distance);
-    camera.lookAt(0, 0, 0);
-    const controls = controlsRef.current;
-    if (controls) {
-      controls.target.set(0, 0, 0);
-      controls.update();
-    }
-    // pose changes come from an IntersectionObserver via React state, not anything r3f's
-    // own reconciler would notice — without this, frameloop="demand" would never render
-    // the new camera position.
-    invalidate();
+    applyFit(controlsRef.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pose]);
 
@@ -80,7 +85,21 @@ export function CameraRig({ pose, isMobile, reducedMotion }: CameraRigProps) {
 
   return (
     <OrbitControls
-      ref={controlsRef}
+      ref={(instance: OrbitControlsImpl | null) => {
+        controlsRef.current = instance;
+        // OrbitControls seeds its internal spherical state from the camera's position at
+        // the moment IT mounts — which can happen before the pose-change layout effect
+        // above ever gets a chance to run (React doesn't guarantee this sibling's effect
+        // fires before that ref attaches). If that first read catches the camera at
+        // Object3D's default (0,0,0) — a zero-length offset from the target — the controls
+        // clamp their internal radius/polar angle to their min bounds and, since later
+        // update() calls apply deltas to that internal state rather than re-deriving it
+        // from camera.position, our later direct position writes get overwritten right
+        // back to those clamped mins on the next frame. Re-applying the fit right here,
+        // the instant the instance exists, guarantees the very first spherical read
+        // OrbitControls ever does already sees the correct position.
+        if (instance) applyFit(instance);
+      }}
       enablePan={false}
       enableZoom={!isMobile}
       minDistance={baseDistance * 0.7}
