@@ -1,0 +1,106 @@
+.section {
+  position: relative;
+  z-index: 1;
+  padding: clamp(64px, 10vh, 120px) clamp(16px, 6vw, 64px);
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: clamp(32px, 6vw, 64px);
+  max-width: 1000px;
+}
+
+.kicker {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 5vw, 44px);
+  font-weight: 600;
+  max-width: 20ch;
+}
+
+.recap {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 20px 24px;
+}
+
+.recapRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 13px;
+  border-bottom: 1px solid var(--line);
+}
+
+.recapRow:last-of-type {
+  border-bottom: none;
+}
+
+.recapKey {
+  color: var(--muted);
+}
+
+.recapTotal {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 14px;
+  margin-top: 6px;
+  border-top: 1px solid var(--ink);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.emailInput {
+  flex: 1;
+  min-width: 220px;
+  min-height: 48px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.emailInput:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.submit {
+  min-height: 48px;
+  padding: 0 24px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.submit:hover {
+  opacity: 0.9;
+}
+
+.confirmation {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.fine {
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
