@@ -57,6 +57,7 @@ export function useMadeScrollStory(getRefs: () => KeyboardRefs) {
     if (!sectionEl) return;
 
     function applyProgress(progress: number) {
+      if (!sectionEl) return;
       const refs = getRefs();
       const p2 = beatProgress(progress, 1);
       const p3 = beatProgress(progress, 2);
@@ -75,6 +76,18 @@ export function useMadeScrollStory(getRefs: () => KeyboardRefs) {
 
       const beat = Math.min(3, Math.floor(progress * 4));
       useScrollStoryStore.getState().setBeat(beat);
+
+      // The sticky caption panel's native CSS un-stick (it can't stay pinned once less than
+      // its own 100vh remains in the section) exactly covers beat 3's entire dwell, since
+      // both are the section's final 100vh. Left alone, that means the last thing visible
+      // as it un-sticks is a cropped sliver of the "Configure yours" row right as the next
+      // section starts — reads as broken rather than a clean finish. Fading the panel out
+      // over the closing stretch of scroll (as a CSS var, not React state — this runs every
+      // scrub tick and a re-render per frame would be wasteful) means it's already gone
+      // before the crop becomes visible, so it lands as the section ending, not tearing.
+      const tailFadeStart = 0.9;
+      const captionOpacity = progress <= tailFadeStart ? 1 : 1 - (progress - tailFadeStart) / (1 - tailFadeStart);
+      sectionEl.style.setProperty('--made-caption-opacity', String(clamp01(captionOpacity)));
 
       // These are raw mutations on refs, outside r3f's own reconciler — in
       // frameloop="demand" mode nothing else would tell the canvas a new frame is needed.

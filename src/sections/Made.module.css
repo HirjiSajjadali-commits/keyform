@@ -16,6 +16,10 @@
   flex-direction: column;
   justify-content: flex-end;
   padding: 0 clamp(16px, 6vw, 64px) clamp(48px, 8vh, 96px);
+  /* Set on #made by useMadeScrollStory.ts — fades this panel out over the closing stretch
+     of scroll so it's gone before its native CSS-sticky un-stick would otherwise crop it
+     against the next section. See that hook for why. */
+  opacity: var(--made-caption-opacity, 1);
 }
 
 .captionStack {
@@ -31,12 +35,18 @@
   left: 0;
   right: 0;
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease, color 0.3s ease, background-color 0.3s ease;
   pointer-events: none;
 }
 
+/* Entering caption's fade+settle is delayed by the exact duration of the exiting caption's
+   fade+rise above, so the two never run at once — a clean handoff instead of a cross-dissolve
+   where both captions are partially visible and readable text overlaps ("smudged" look). */
 .caption[data-active='true'] {
   opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease 0.3s, transform 0.3s ease 0.3s, color 0.3s ease, background-color 0.3s ease;
   pointer-events: auto;
 }
 
